@@ -28,9 +28,7 @@ public class NewsController {
         log.info("Received request to get company news for symbol [{}]", symbol);
         Object newsResponse = this.newsService.getCompanyNews(symbol,  pageNo, pageSize, isPaginate);
 
-        String resultMessage = (newsResponse != null) ? "Contains news data" : "No news data";
-        log.info("Financial news request for symbol [{}] has completed. Response data: [{}]", symbol, resultMessage);
-
+        log.info("Financial news request for symbol [{}] has completed", symbol);
         return ResponseEntity.ok(newsResponse);
     }
 

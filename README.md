@@ -20,7 +20,7 @@
   
 - **Docker** – Containerizing the application for deployment phrase.
   
-- **Zipkin**, **Micrometer**, **Spring Boot Actuator** – Logging and distributed tracing.
+- **SLF4J**, **Zipkin**, **Micrometer**, **Spring Boot Actuator** – Logging and distributed tracing.
   
 - **Finnhub API** – 3rd Party API that provides stock data and financial news.
 

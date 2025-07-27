@@ -30,6 +30,8 @@
 
 ### Flow 1 – Client Starts Tracking a Symbol
 
+![FLow 1 - Sequence Diagram](https://res.cloudinary.com/dw3x8orox/image/upload/v1753614747/flow1_im1wpv.png)
+
 **1. User selects a stock symbol to track (e.g., `META`):**
 
 - The frontend:
@@ -58,6 +60,8 @@
   - Broadcasts the updated price to all clients subscribed to symbol `META`.
 
 ### Flow 2 – Client Switches to a New Symbol
+
+![Flow 2 - Sequence Diagram](https://res.cloudinary.com/dw3x8orox/image/upload/v1753614747/flow2_owhwwb.png)
 
 **1. User selects a different symbol to track (e.g., `AAPL`):**
 

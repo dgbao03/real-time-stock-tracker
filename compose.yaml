@@ -1,0 +1,34 @@
+services:
+  app:
+    build: .
+    ports:
+      - "1511:8080"
+    depends_on:
+      - redis
+      - zipkin
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

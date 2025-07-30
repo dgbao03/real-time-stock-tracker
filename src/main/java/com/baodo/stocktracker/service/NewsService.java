@@ -43,10 +43,6 @@ public class NewsService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             try {
-                if ("TEST_ERROR".equalsIgnoreCase(symbol)) {
-                    throw new RuntimeException("Simulated exception for testing");
-                }
-
                 List<NewsItemResponse> news = finnhubClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/company-news")

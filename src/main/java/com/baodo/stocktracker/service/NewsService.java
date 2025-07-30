@@ -30,7 +30,7 @@ public class NewsService {
         this.tracer = tracer;
     }
 
-    public Object getCompanyNews(String symbol, int pageNo, int pageSize, boolean isPaginate) {
+    public List<NewsItemResponse> getCompanyNews(String symbol) {
         var span = tracer.nextSpan().name("NewsService - getCompanyNews: Fetching company news").start();
         try (Tracer.SpanInScope ignored = tracer.withSpan(span)) {
             log.info("Fetching company news for symbol from Finnhub API: {}", symbol);
@@ -53,17 +53,8 @@ public class NewsService {
                         .collectList()
                         .block();
 
-                if (!isPaginate || news == null) {
-                    return news == null ? Collections.emptyList() : news;
-                }
-
-                Pageable pageable = PageRequest.of(pageNo, pageSize);
-                int start = (int) pageable.getOffset();
-                int end = Math.min(start + pageable.getPageSize(), news.size());
-
-                List<NewsItemResponse> pagedList = news.subList(start, end);
-                return new PageImpl<>(pagedList, pageable, news.size());
-            } catch (Exception ex){
+                return news == null ? Collections.emptyList() : news;
+            } catch (Exception ex) {
                 log.info("Failed to fetch company news from Finnhub for symbol [{}]: {}", symbol, ex.getMessage());
                 return Collections.emptyList();
             }
@@ -71,5 +62,6 @@ public class NewsService {
             span.end();
         }
     }
+
 
 }

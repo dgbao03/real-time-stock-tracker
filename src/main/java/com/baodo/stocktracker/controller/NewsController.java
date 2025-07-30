@@ -19,14 +19,10 @@ public class NewsController {
     private NewsService newsService;
 
     @GetMapping
-    public ResponseEntity<?> getCompanyNews (
-            @RequestParam String symbol,
-            @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "true") boolean isPaginate
-    ){
+    public ResponseEntity<?> getCompanyNews(@RequestParam String symbol) {
         log.info("Received request to get company news for symbol [{}]", symbol);
-        Object newsResponse = this.newsService.getCompanyNews(symbol,  pageNo, pageSize, isPaginate);
+
+        List<NewsItemResponse> newsResponse = this.newsService.getCompanyNews(symbol);
 
         log.info("Financial news request for symbol [{}] has completed", symbol);
         return ResponseEntity.ok(newsResponse);

@@ -105,8 +105,8 @@ public class FinnhubService {
                         .bodyToMono(SymbolQuoteResponse.class)
                         .doOnTerminate(newSpan::end)
                         .onErrorResume(ex -> {
-                            log.info("Failed to fetch company news from Finnhub for symbol [{}]: {}", symbol, ex.getMessage());
-                            return Mono.error(new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to fetch company news from Finnhub for symbol [" + symbol + "]", ex));
+                            log.info("Failed to fetch stock data from Finnhub for symbol [{}]: {}", symbol, ex.getMessage());
+                            return Mono.error(new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to fetch stock data from Finnhub for symbol [" + symbol + "]", ex));
                         });
             }
         });

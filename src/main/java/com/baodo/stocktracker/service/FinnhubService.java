@@ -7,9 +7,11 @@ import io.micrometer.tracing.Tracer;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import reactor.core.publisher.Mono;
@@ -92,6 +94,7 @@ public class FinnhubService {
         return Mono.deferContextual(contextView -> {
             try (Tracer.SpanInScope scope = tracer.withSpan(newSpan.start())) {
                 log.info("Fetching quote for symbol [{}] from Finnhub", symbol);
+
                 return finnhubWebClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/quote")
@@ -103,7 +106,7 @@ public class FinnhubService {
                         .doOnTerminate(newSpan::end)
                         .onErrorResume(ex -> {
                             log.info("Failed to fetch company news from Finnhub for symbol [{}]: {}", symbol, ex.getMessage());
-                            return Mono.error(new RuntimeException("Failed to fetch quote for symbol: " + symbol, ex));
+                            return Mono.error(new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to fetch company news from Finnhub for symbol [" + symbol + "]", ex));
                         });
             }
         });

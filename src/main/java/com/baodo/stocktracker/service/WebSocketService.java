@@ -6,9 +6,11 @@ import io.micrometer.tracing.Span;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.io.IOException;
@@ -48,8 +50,8 @@ public class WebSocketService {
 
                 SymbolQuoteResponse quote = finnhubService.getQuote(newSymbol).block();
                 if (quote == null || (quote.getC() == 0.0 && quote.getT() == 0)) {
-                    log.warn("Symbol [{}] is invalid or has no trade data", newSymbol);
-                    return;
+                    log.info("Symbol [{}] is invalid or has no trade data", newSymbol);
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Symbol [" + newSymbol + "] not found");
                 }
                 redisService.save(newSymbol, quote.getC());
             }

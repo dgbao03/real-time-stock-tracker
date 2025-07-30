@@ -6,10 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -40,6 +43,10 @@ public class NewsService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             try {
+                if ("TEST_ERROR".equalsIgnoreCase(symbol)) {
+                    throw new RuntimeException("Simulated exception for testing");
+                }
+
                 List<NewsItemResponse> news = finnhubClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/company-news")
@@ -56,7 +63,7 @@ public class NewsService {
                 return news == null ? Collections.emptyList() : news;
             } catch (Exception ex) {
                 log.info("Failed to fetch company news from Finnhub for symbol [{}]: {}", symbol, ex.getMessage());
-                return Collections.emptyList();
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Failed to fetch company news from Finnhub for symbol [" + symbol + "]");
             }
         } finally {
             span.end();

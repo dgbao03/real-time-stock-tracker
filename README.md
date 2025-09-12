@@ -85,8 +85,23 @@
 
   - Proceeds to handle tracking for symbol `AAPL` using the same steps as in Flow 1.
 
- ---
+---
 
+## APIs and WebSocket
+
+- `GET /company-news?symbol=stock-symbol`: Return a list of company news for a given stock symbol
+
+
+- `/ws` and destination `/app/trackingSymbol`
+
+    ```json
+    {
+      "currentSymbol": "AAPL",
+      "newSymbol": "MSFT"
+    }
+    ```
+  
+---
 ## Setup
 
 - Before running the application, create a `.env` file in the root directory of the project with the following content:
@@ -105,6 +120,8 @@ CACHE_TYPE = redis
 
 ## Running The Application
 
+- The server will be exposed through port 1511.
+
 ### Build project
 ```
 
@@ -118,6 +135,10 @@ mvn clean package
 docker compose up --build -d
 
 ```
+
+### Frontend (Optional)
+
+- A simple frontend file stock-tracker.html is included in the project. You can open it in a browser to quickly test and visualize the system for demonstration purposes.
 
 ---
 
@@ -138,6 +159,12 @@ docker compose up --build -d
 http://localhost:9411
 
 ```
+
+---
+
+## Demonstration
+
+![Home Page](https://res.cloudinary.com/dw3x8orox/image/upload/v1757674709/Screenshot_2025-09-12_at_17.57.04_shwm0l.png)
 
 ---
 

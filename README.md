@@ -43,6 +43,7 @@
 - `GET /company-news`: Return a list of company news for a given stock symbol
 
   - **Query Parameters**:
+
     - `symbol`: Stock's symbol. Ex: AAPL (APPLE)
 
 

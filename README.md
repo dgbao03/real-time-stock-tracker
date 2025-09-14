@@ -32,64 +32,18 @@
 
 ![FLow 1 - Sequence Diagram](https://res.cloudinary.com/dw3x8orox/image/upload/v1753614747/flow1_im1wpv.png)
 
-**1. User selects a stock symbol to track (e.g., `META`):**
-
-- The frontend:
-  - Establishes a WebSocket connection with the backend.
-    
-  - Subscribes to the topic of symbol `META` through WS connection.
-
-- The backend:
-  - First checks Redis cache to see if the latest price for `META` is already stored.
-    
-    - If the price is found in cache, it is returned immediately to the client.
-      
-    - If the price is not found, the backend sends a REST API request to Finnhub to retrieve the latest price, then stores it in Redis and returns it to the client.
-      
-  - This caching mechanism ensures that if multiple clients are tracking the same symbol, new clients can reuse the cached data without triggering redundant API calls.
-    
-  - Since at least one client is subscribed, the backend maintains a WebSocket connection with Finnhub for symbol `META` to receive real-time updates.
-    
-    - Whenever an update is received, the backend updates the Redis cache and broadcasts the new price to all subscribed clients — keeping the cached data fresh and accurate for everyone.
-
-**2. When Finnhub sends a price update for `META`:**
-
-- The backend:
-  - Updates the Redis cache with the new price.
-    
-  - Broadcasts the updated price to all clients subscribed to symbol `META`.
-
 ### Flow 2 – Client Switches to a New Symbol
 
 ![Flow 2 - Sequence Diagram](https://res.cloudinary.com/dw3x8orox/image/upload/v1753614747/flow2_owhwwb.png)
-
-**1. User selects a different symbol to track (e.g., `AAPL`):**
-
-- The frontend:
-  - Unsubscribes from the previous symbol (`META`) via WebSocket.
-    
-  - Initiates a new tracking flow for symbol `AAPL` (same as Flow 1).
-
-- The backend:
-  - Checks how many clients are still subscribed to `META`.
-  
-    - If no clients remain:
-      - Removes the cached price of `META`.
-        
-      - This ensures that if a new client starts tracking `META` in the future, the system will fetch the latest stock price directly from the external API (Finnhub) instead of using potentially outdated cached data.
-        
-      - Since there are no clients subscribed to `META`, the backend also stops receiving real-time updates from Finnhub for this symbol — meaning the cached price would no longer be updated. Removing the cache prevents serving stale data to future clients.
-  
-    - If clients are still subscribed:
-      - Keeps the cache and the WebSocket connection to Finnhub active, ensuring continued real-time updates and cache freshness.
-
-  - Proceeds to handle tracking for symbol `AAPL` using the same steps as in Flow 1.
 
 ---
 
 ## APIs and WebSocket
 
-- `GET /company-news?symbol=stock-symbol`: Return a list of company news for a given stock symbol
+- `GET /company-news`: Return a list of company news for a given stock symbol
+
+  - **Query Parameters**:
+    - `symbol`: Stock's symbol. Ex: AAPL (APPLE)
 
 
 - `/ws` and destination `/app/trackingSymbol`
